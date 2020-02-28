@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "fastify": "^2.8.0",
-    "tog-node": "^0.2.0"
+    "tog-node": "^0.3.2"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",

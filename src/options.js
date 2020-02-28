@@ -1,9 +1,8 @@
 const splitFlags = (flags, state) =>
   flags && flags.split(',').reduce((all, flag) => ({ ...all, [flag]: state }), {})
 
-const parseOptions = ({ experiment, enable, disable }) => {
+const parseOptions = ({ enable, disable }) => {
   return {
-    experiment: experiment || undefined,
     flags: {
       ...splitFlags(enable, true),
       ...splitFlags(disable, false)

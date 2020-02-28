@@ -2,8 +2,9 @@ const server = require('./server')
 
 const mockSession = jest.fn()
 
-jest.mock('tog-node', () =>
-  jest.fn().mockImplementation(() => ({ session: mockSession })))
+jest.mock('tog-node', () => ({
+  SessionClient: jest.fn().mockImplementation(() => ({ session: mockSession }))
+}))
 
 const any = expect.anything()
 const defaultExpiration = 60
@@ -28,7 +29,7 @@ describe('retrieve session', () => {
       expect(res.payload).toEqual(serializedPayload)
 
       expect(mockSession).toHaveBeenCalledWith(
-        'some-ns', 'abc123', defaultExpiration, expect.objectContaining({}))
+        'some-ns', 'abc123', expect.objectContaining({ duration: defaultExpiration }))
     })
   })
 
@@ -44,13 +45,13 @@ describe('retrieve session', () => {
       expect(res.payload).toEqual(serializedPayload)
 
       expect(mockSession).toHaveBeenCalledWith(
-        'some-ns', 'abc123', defaultExpiration, { experiment: undefined, flags: {} })
+        'some-ns', 'abc123', expect.objectContaining({ duration: defaultExpiration, flags: {} }))
     })
 
     test('accepts enabled flags', async () => {
       await app.inject('/some-ns/abc123?enable=one,two')
 
-      expect(mockSession).toHaveBeenCalledWith(any, any, any,
+      expect(mockSession).toHaveBeenCalledWith(any, any,
         expect.objectContaining({
           flags: { one: true, two: true }
         }))
@@ -59,18 +60,9 @@ describe('retrieve session', () => {
     test('accepts disabled flags', async () => {
       await app.inject('/some-ns/abc123?disable=one,two')
 
-      expect(mockSession).toHaveBeenCalledWith(any, any, any,
+      expect(mockSession).toHaveBeenCalledWith(any, any,
         expect.objectContaining({
           flags: { one: false, two: false }
-        }))
-    })
-
-    test('accepts explicit experiment', async () => {
-      await app.inject('/some-ns/abc123?experiment=foobar')
-
-      expect(mockSession).toHaveBeenCalledWith(any, any, any,
-        expect.objectContaining({
-          experiment: 'foobar'
         }))
     })
   })
