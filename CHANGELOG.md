@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.4](https://github.com/escaletech/tog-session-server/compare/v0.2.3...v0.2.4) (2020-03-10)
+
+
+### Features
+
+* accept duration in seconds as option ([b1cc2a6](https://github.com/escaletech/tog-session-server/commit/b1cc2a6745150326660d4bbc1b4eabae19a89e3b))
+* allow setting max duration as config option ([1130974](https://github.com/escaletech/tog-session-server/commit/1130974d651953538180f97a78d1937e3436ab9e))
+
+
+### Bug Fixes
+
+* allow only positive integer duration ([3598aff](https://github.com/escaletech/tog-session-server/commit/3598aff3f15cfe3d0d6d1ec2188be2633e063c64))
+
 ### [0.2.3](https://github.com/escaletech/tog-session-server/compare/v0.2.2...v0.2.3) (2020-03-03)
 
 
