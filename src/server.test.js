@@ -8,6 +8,7 @@ jest.mock('tog-node', () => ({
 
 const any = expect.anything()
 const defaultExpiration = 60
+const maxDuration = defaultExpiration
 const mockSessionPayload = { id: 'abc123' }
 const serializedPayload = JSON.stringify(mockSessionPayload)
 
@@ -18,7 +19,7 @@ beforeEach(() => {
 
 describe('retrieve session', () => {
   describe('with path prefix', () => {
-    const app = server({ pathPrefix: '/sessions', defaultExpiration })
+    const app = server({ pathPrefix: '/sessions', defaultExpiration, maxDuration })
 
     afterAll(() => app.close())
 
@@ -34,7 +35,7 @@ describe('retrieve session', () => {
   })
 
   describe('with default configuration', () => {
-    const app = server({ pathPrefix: '', defaultExpiration })
+    const app = server({ pathPrefix: '', defaultExpiration, maxDuration })
 
     afterAll(() => app.close())
 
@@ -90,6 +91,22 @@ describe('retrieve session', () => {
           duration: want
         })
       )
+    })
+  })
+
+  describe('with custom max duration', () => {
+    const app = server({ pathPrefix: '', defaultExpiration, maxDuration: 5 })
+
+    afterAll(() => app.close())
+
+    test('respects max duration', async () => {
+      const res = await app.inject('/some-ns/abc123?duration=6')
+
+      expect(res.statusCode).toBe(200)
+      expect(res.payload).toEqual(serializedPayload)
+
+      expect(mockSession).toHaveBeenCalledWith(
+        'some-ns', 'abc123', expect.objectContaining({ duration: 5, flags: {} }))
     })
   })
 })

@@ -3,7 +3,7 @@ const { SessionClient } = require('tog-node')
 
 const { parseOptions } = require('./options')
 
-function server ({ pathPrefix, redisUrl, isRedisCluster, defaultExpiration }, fastifyConfig = {}) {
+function server ({ pathPrefix, redisUrl, isRedisCluster, defaultExpiration, maxDuration }, fastifyConfig = {}) {
   const client = new SessionClient(redisUrl, { cluster: isRedisCluster })
 
   return fastify(fastifyConfig)
@@ -12,7 +12,7 @@ function server ({ pathPrefix, redisUrl, isRedisCluster, defaultExpiration }, fa
       return client.session(request.params.ns, request.params.sid, {
         flags: options.flags,
         duration: options.duration >= 1
-          ? options.duration
+          ? Math.min(options.duration, maxDuration)
           : defaultExpiration
       })
         .then(session => reply.status(200).send(session))
