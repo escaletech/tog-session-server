@@ -11,7 +11,9 @@ function server ({ pathPrefix, redisUrl, isRedisCluster, defaultExpiration }, fa
       const options = parseOptions(request.query)
       return client.session(request.params.ns, request.params.sid, {
         flags: options.flags,
-        duration: defaultExpiration
+        duration: isNaN(options.duration)
+          ? defaultExpiration
+          : options.duration
       })
         .then(session => reply.status(200).send(session))
     })

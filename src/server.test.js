@@ -65,5 +65,27 @@ describe('retrieve session', () => {
           flags: { one: false, two: false }
         }))
     })
+
+    test('accepts custom valid duration', async () => {
+      await app.inject('/some-ns/abc123?disable=one&enable=two&duration=0')
+
+      expect(mockSession).toHaveBeenCalledWith(any, any,
+        expect.objectContaining({
+          flags: { one: false, two: true },
+          duration: 0
+        })
+      )
+    })
+
+    test('resolves custom invalid duration', async () => {
+      await app.inject('/some-ns/abc123?disable=one&enable=two&duration=number')
+
+      expect(mockSession).toHaveBeenCalledWith(any, any,
+        expect.objectContaining({
+          flags: { one: false, two: true },
+          duration: defaultExpiration
+        })
+      )
+    })
   })
 })
