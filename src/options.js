@@ -7,7 +7,7 @@ const parseOptions = ({ enable, disable, duration }) => {
       ...splitFlags(enable, true),
       ...splitFlags(disable, false)
     },
-    duration: Number(duration)
+    duration: parseInt(duration)
   }
 }
 

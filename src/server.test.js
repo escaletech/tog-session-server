@@ -67,23 +67,27 @@ describe('retrieve session', () => {
     })
 
     test('accepts custom valid duration', async () => {
-      await app.inject('/some-ns/abc123?disable=one&enable=two&duration=0')
+      await app.inject('/some-ns/abc123?disable=one&enable=two&duration=1')
 
       expect(mockSession).toHaveBeenCalledWith(any, any,
         expect.objectContaining({
           flags: { one: false, two: true },
-          duration: 0
+          duration: 1
         })
       )
     })
 
-    test('resolves custom invalid duration', async () => {
-      await app.inject('/some-ns/abc123?disable=one&enable=two&duration=number')
+    test.each([
+      { duration: 'number', want: defaultExpiration },
+      { duration: 5.678, want: 5 },
+      { duration: -1, want: defaultExpiration }
+    ])('resolves custom invalid duration', async ({ duration, want }) => {
+      await app.inject(`/some-ns/abc123?disable=one&enable=two&duration=${duration}`)
 
       expect(mockSession).toHaveBeenCalledWith(any, any,
         expect.objectContaining({
           flags: { one: false, two: true },
-          duration: defaultExpiration
+          duration: want
         })
       )
     })
