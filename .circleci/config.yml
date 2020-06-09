@@ -1,20 +1,24 @@
 version: 2.1
 jobs:
-  test:
+  build-and-test:
     docker:
-      - image: circleci/node:10
+      - image: cimg/go:1.14
     steps:
       - checkout
-      - run: npm install
-      - run: npm test
+      - run: make build-ci
+      - run: make test
+      - persist_to_workspace:
+          root: .
+          paths: [dist/server]
 
   publish:
     docker:
-      - image: circleci/node:10
+      - image: cimg/go:1.14
     steps:
       - checkout
       - setup_remote_docker
-      - run: npm install --production
+      - attach_workspace:
+          at: .
       - run: docker login -u ${DOCKER_LOGIN} -p ${DOCKER_PASSWORD}
       - run: ./docker_deploy.sh escaletech/tog-session-server
 
@@ -22,11 +26,11 @@ workflows:
   version: 2
   ci:
     jobs:
-      - test:
+      - build-and-test:
           filters: &ci-filters { tags: { ignore: /.*/ } }
   release:
     jobs:
-      - test:
+      - build-and-test:
           filters:
             &release-filters {
               branches: { ignore: /.*/ },
@@ -34,5 +38,5 @@ workflows:
             }
       - publish:
           requires:
-            - test
+            - build-and-test
           filters: *release-filters

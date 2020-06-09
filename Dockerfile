@@ -1,7 +1,9 @@
-FROM node:10-alpine
+FROM alpine
 
-COPY . .
+WORKDIR /app
+
+COPY ./dist/server /app/server
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["/app/server"]
