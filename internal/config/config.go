@@ -3,7 +3,7 @@ package config
 import "github.com/kelseyhightower/envconfig"
 
 type Config struct {
-	PathPrefix   string `default:"3000" split_words:"true"`
+	PathPrefix   string `default:"" split_words:"true"`
 	RedisURL     string `default:"redis://localhost" split_words:"true"`
 	RedisCluster bool   `default:"false" split_words:"true"`
 }
