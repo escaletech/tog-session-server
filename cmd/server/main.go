@@ -15,9 +15,7 @@ import (
 
 func main() {
 	logger := log.New(os.Stderr, "tog: ", log.LstdFlags|log.Lshortfile)
-	if err := godotenv.Load(); err != nil {
-		logger.Fatal(err)
-	}
+	godotenv.Load()
 
 	conf, err := config.FromEnv()
 	if err != nil {
