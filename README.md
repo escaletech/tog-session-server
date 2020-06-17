@@ -19,4 +19,14 @@ $ curl localhost:3000/<NAMESPACE>/<SESSION-ID>
 * `PATH_PREFIX` - Prefix to the endpoint (**optional**, e.g. `/_sessions`)
 * `REDIS_URL` - URL for the Redis server used by Tog (**required**, e.g. `redis://my-redis-server.com`)
 * `REDIS_CLUSTER` - Set to `true` if Redis URL is a cluster (**optional**, default: `false`)
-* `DEFAULT_EXPIRATION` - Expiration (**optional**, default: `604800` - one week)
+
+
+## Development
+
+Requires Go 1.14 and Redis 4.0+.
+
+Common operations:
+* Run server locally while watching for changes: `make dev`
+* Run all tests: `make test`
+* Start tests while watching for changes: `make test-watch`
+* Release a new version: `make release`
