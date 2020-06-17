@@ -22,7 +22,11 @@ func (h *handler) Session(c *fiber.Ctx) {
 	opt := parseOptions(c)
 	session := h.client.Session(c.Context(), namespace, sessionID, &opt)
 
-	c.Status(fiber.StatusOK).JSON(session)
+	c.Status(fiber.StatusOK).JSON(SessionResponse{
+		Namespace: namespace,
+		ID:        sessionID,
+		Flags:     session,
+	})
 }
 
 func parseOptions(c *fiber.Ctx) sessions.SessionOptions {
@@ -52,4 +56,10 @@ func parseOptions(c *fiber.Ctx) sessions.SessionOptions {
 		Traits: traits,
 		Force:  force,
 	}
+}
+
+type SessionResponse struct {
+	Namespace string           `json:"namespace"`
+	ID        string           `json:"id"`
+	Flags     sessions.Session `json:"flags"`
 }

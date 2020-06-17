@@ -93,9 +93,9 @@ func testScenario(conf config.Config, uri string, expectedCall SessionParams) fu
 func assertResponse(t *testing.T, res *http.Response, expectedStatus int, expectedBody sessions.Session) {
 	t.Helper()
 	assert.Equal(t, expectedStatus, res.StatusCode)
-	var actualBody sessions.Session
+	var actualBody handler.SessionResponse
 	json.NewDecoder(res.Body).Decode(&actualBody)
-	assert.Equal(t, expectedBody, actualBody)
+	assert.Equal(t, expectedBody, actualBody.Flags)
 }
 
 type fakeSessionClient struct {
