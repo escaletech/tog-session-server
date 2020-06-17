@@ -46,5 +46,7 @@ workflows:
           filters: *release-filters
       - gh-release/create-release:
           context: github-create-release
+          requires:
+            - publish
           filters: *release-filters
 
