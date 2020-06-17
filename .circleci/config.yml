@@ -1,4 +1,8 @@
 version: 2.1
+
+orbs:
+  gh-release: escaletech/gh-conventional-release@0.1.0
+
 jobs:
   build-and-test:
     docker:
@@ -40,3 +44,7 @@ workflows:
           requires:
             - build-and-test
           filters: *release-filters
+      - gh-release/create-release:
+          context: github-create-release
+          filters: *release-filters
+
