@@ -1,6 +1,8 @@
 version: 2.1
 
 orbs:
+  aws-ecr: circleci/aws-ecr@7.0
+  aws-eks: circleci/aws-eks@1.1
   gh-release: escaletech/gh-conventional-release@0.1.0
 
 jobs:
@@ -15,16 +17,10 @@ jobs:
           root: .
           paths: [dist/server]
 
-  publish:
-    docker:
-      - image: cimg/go:1.14
-    steps:
-      - checkout
-      - setup_remote_docker
-      - attach_workspace:
-          at: .
-      - run: docker login -u ${DOCKER_LOGIN} -p ${DOCKER_PASSWORD}
-      - run: ./docker_deploy.sh escaletech/tog-session-server
+release-filters: &release-filters
+  filters:
+      branches: { ignore: /.*/ }
+      tags: { only: /^v.*/ }
 
 workflows:
   version: 2
@@ -35,18 +31,18 @@ workflows:
   release:
     jobs:
       - build-and-test:
-          filters:
-            &release-filters {
-              branches: { ignore: /.*/ },
-              tags: { only: /^v.*/ },
-            }
-      - publish:
-          requires:
-            - build-and-test
-          filters: *release-filters
+          <<: *release-filters
+      - aws-ecr/build-and-push-image:
+          context: eks-applications
+          repo: tog-session-server
+          create-repo: true
+          attach-workspace: true
+          tag: ${CIRCLE_TAG#v},latest
+          dockerfile: Dockerfile
+          requires: [build-and-test]
+          <<: *release-filters
       - gh-release/create-release:
           context: github-create-release
-          requires:
-            - publish
-          filters: *release-filters
+          requires: [aws-ecr/build-and-push-image]
+          <<: *release-filters
 
