@@ -17,6 +17,15 @@ jobs:
           root: .
           paths: [dist/server]
 
+ci_only: &ci_only
+  filters:
+    tags: { ignore: /.*/ }
+
+staging_only: &staging_only
+  filters:
+    branches: { only: [master] }
+    tags: { ignore: /.*/ }
+
 release-filters: &release-filters
   filters:
       branches: { ignore: /.*/ }
@@ -27,7 +36,22 @@ workflows:
   ci:
     jobs:
       - build-and-test:
-          filters: &ci-filters { tags: { ignore: /.*/ } }
+          <<: *ci_only
+
+  staging:
+    jobs:
+      - build-and-test:
+          <<: *staging_only
+      - aws-ecr/build-and-push-image:
+          context: eks-apps-escale-staging
+          repo: tog-session-server
+          create-repo: true
+          attach-workspace: true
+          tag: ${CIRCLE_SHA1:0:7},master
+          dockerfile: Dockerfile
+          requires: [build-and-test]
+          <<: *staging_only
+
   release:
     jobs:
       - build-and-test:
