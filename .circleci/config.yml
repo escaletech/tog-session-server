@@ -19,12 +19,12 @@ jobs:
 
 ci_only: &ci_only
   filters:
-    tags: { ignore: /.*/ }
+    tags: { ignore: /^v.*/ }
 
 staging_only: &staging_only
   filters:
     branches: { only: [master] }
-    tags: { ignore: /.*/ }
+    tags: { ignore: /^v.*/ }
 
 release-filters: &release-filters
   filters:
@@ -47,7 +47,7 @@ workflows:
           repo: tog-session-server
           create-repo: true
           attach-workspace: true
-          tag: ${CIRCLE_SHA1:0:7},master
+          tag: ${CIRCLE_SHA1:0:7},dev
           dockerfile: Dockerfile
           requires: [build-and-test]
           <<: *staging_only
